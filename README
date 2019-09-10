@@ -1,0 +1,100 @@
+INTRODUCTION
+
+`nxt' is a simple command line checklist tool. You feed 
+it a file filled with checklist items and it tells you
+what needs to be done next.
+
+You cannot directory specify the checklist file from
+the nxt command line as a parameter. `nxt' looks in one
+of the following three places for its file:
+
+ 1. File $HOME/.nxtfile			-- lowest priority
+ 2. File ./.nxtfile			-- seond priority
+ 3. Environment variable $NXTFILE	-- highest priority 
+
+  Syntax: nxt [command] [item]
+          nxt -h|--help
+	  nxt -v|--version
+
+
+COMMANDS 
+
+Commands are uniquely identified by their first
+letter, so nxt only checks the first letter of what
+you pass it. Therefore the following are all the same:
+
+ $ nxt d
+ $ nxt done
+ $ nxt dokfjg
+
+The commands are:
+
+ - n for "next"  -- show the next item
+ - d for "done"  -- mark the next item done
+ - r for "reset" -- make all items not done
+ - c for "cat"   -- show all items (just cats the file)
+
+
+
+
+Manual by examples: 
+
+The basic use is just the following two:
+
+$ nxt
+
+ -- Show the next numbered item on your checklist.
+
+$ nxt done
+
+ -- Mark the next item done, then show the new next
+    item.
+
+
+Additional items for convenience:
+
+$ nxt n
+
+ -- Show just the item number of the next item.
+    `n' here is not a variable, it is the literal 
+    character `n'.
+
+$ nxt init
+
+ -- Mark all items in the file as not done.
+
+$ nxt complete
+
+ -- Mark all items in the file as done.
+
+$ nxt foo
+
+ -- Show the fifth item in the checklist, whether
+    it is done or not. Here we are talking about 
+    an actual digit.
+
+
+When showing a checklist item, nxt shows both the 
+item number tag and its status, and the item text:
+
+$ nxt 5
+
+:5:D
+Frobnicate the foo.
+
+$ nxt status 5
+
+ -- Shows the status (done or not) of item 5.
+
+
+An item in the file should look like this:
+
+:2:
+Do something.
+::
+
+When the item is marked done, whether by you or by
+nxt, a capital letter `D' is appended to the :2:
+
+nxt will show anything between a start tag and end
+tag, including the start tag

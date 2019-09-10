@@ -1,0 +1,89 @@
+#!/bin/sh
+### nxt --- Super-simple checklists at the cli
+
+### Initialize variables
+i=""     # "item" -- $2 if it exists is what line to
+         # operate on. Default is next undone item
+f=""     # "file" -- File name
+a="next" # "action" -- Defined here as default if no $2
+
+
+### Basic nxt function
+## Get stuff that isn't already marked Done
+onlyUndone() { 
+  if (grep -v '<<D.*>>' "$1")
+  then return 1;else return 0; fi
+}
+
+## Eg. nxtRaw filename
+nxtRaw(){
+  if (onlyUndone "$1")
+  then onlyUndone "$1"|head -1
+  else return 1;fi
+}
+## Eg. nxtInternal filename
+nxtInternal(){
+  if (onlyUndone "$1")
+  then nxtRaw "$1"|sed 's/^.*>>//';fi
+}
+## D is for "Done"
+## Eg. nxtDone filename item
+nxtDone () {
+  ed -s "$1" <<EOF
+    /$2/s/$2/D$2/
+    w
+    q
+EOF
+}
+
+### Reset function
+nxtReset() {
+  if (grep -q "^<<D" "$f") then
+    ed -s "$1" <<EOF
+      ,s/^<<D/<</
+      w
+      q
+EOF
+  fi
+}
+
+### Utility functions, more or less
+## Get the tag of nxt item
+nxtTag(){ echo `nxtRaw "$1"`|sed 's/<<D*\(.*\)>>.*$/\1/'; }
+## Just show everything
+nxtCat(){ cat "$1"; }
+## For error messages. It's human
+err(){ echo "Error: $1"; exit $2; }
+
+
+### Parse the command line
+## Set file name and fail if it's not right
+[ -n "$HOME" ] && [ -f "$HOME/.nxtfile" ] && f="$HOME/.nxtfile"
+[ -f "./.nxtfile" ] && f="./.nxtfile"
+[ -n "$NXTFILE" ] && f="$NXTFILE"
+[ -z "$f" ] && err "No file defined" 1
+[ ! -f $f ] && err "File does not exist" 2
+## Set action and item
+[ $# -ne 0 ] && { a="$1"; shift; }
+[ $# -ne 0 ] && { i="$1"; shift; }
+[ $# -ne 0 ] && err "Too many arguments" 3
+
+
+### Ok, let's do it
+## n is for "next"
+if (echo "$a"|grep -q "^n"); then nxtInternal "$f";fi
+## c is for "cat"
+if (echo "$a"|grep -q "^c"); then nxtCat "$f";fi
+## d is for "done"
+if (echo "$a"|grep -q "^d") then 
+  nxtDone "$f" `nxtTag "$f"`
+  nxtInternal "$f"
+fi
+## r is for "reset"
+if (echo "$a"|grep -q "^r") then 
+  nxtReset "$f"
+  nxtInternal "$f"
+fi
+
+
+
