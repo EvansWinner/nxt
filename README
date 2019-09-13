@@ -13,8 +13,8 @@ You cannot directory specify the checklist file from
 the nxt command line as a parameter. `nxt' looks in one
 of the following three places for its file:
 
- 1. File $HOME/.nxtfile			-- lowest priority
- 2. File ./.nxtfile			-- seond priority
+ 1. File $HOME/.nxt			-- lowest priority
+ 2. File ./.nxt				-- second priority
  3. Environment variable $NXTFILE	-- highest priority 
 
   Syntax: nxt [command] [item]

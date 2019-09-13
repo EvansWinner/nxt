@@ -58,8 +58,8 @@ err(){ echo "Error: $1"; exit $2; }
 
 ### Parse the command line
 ## Set file name and fail if it's not right
-[ -n "$HOME" ] && [ -f "$HOME/.nxtfile" ] && f="$HOME/.nxtfile"
-[ -f "./.nxtfile" ] && f="./.nxtfile"
+[ -n "$HOME" ] && [ -f "$HOME/.nxt" ] && f="$HOME/.nxt"
+[ -f "./.nxt" ] && f="./.nxt"
 [ -n "$NXTFILE" ] && f="$NXTFILE"
 [ -z "$f" ] && err "No file defined" 1
 [ ! -f $f ] && err "File does not exist" 2
